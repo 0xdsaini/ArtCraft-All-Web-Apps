@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101014">
+  <title>ArtCraft — App Launcher</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101014;
+      --panel: #18181f;
+      --panel-hover: #20202a;
+      --border: #30303b;
+      --text: #f5f5f7;
+      --muted: #a2a2b1;
+      --accent: #b8a1ff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 15% 0%, rgba(121, 87, 255, .13), transparent 35rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 54px 0 48px; }
+    header { margin-bottom: 30px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      color: var(--accent); font-size: 12px; font-weight: 750;
+      letter-spacing: .16em; text-transform: uppercase;
+    }
+    .mark { width: 9px; height: 9px; border-radius: 3px; background: var(--accent); transform: rotate(45deg); }
+    h1 { margin: 17px 0 8px; font-size: clamp(34px, 6vw, 54px); line-height: 1.04; letter-spacing: -.045em; }
+    .subtitle { color: var(--muted); margin: 0; font-size: 15px; line-height: 1.6; }
+    .toolbar { display: flex; align-items: center; gap: 14px; margin: 28px 0 20px; }
+    .search-wrap { position: relative; flex: 1; }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #858594; pointer-events: none; }
+    #search {
+      width: 100%; height: 48px; padding: 0 16px 0 43px;
+      border: 1px solid var(--border); border-radius: 13px;
+      background: rgba(24,24,31,.88); color: var(--text); font: inherit; outline: none;
+    }
+    #search:focus { border-color: #8270c8; box-shadow: 0 0 0 3px rgba(184,161,255,.1); }
+    .count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .app {
+      min-width: 0; display: flex; flex-direction: column; min-height: 190px;
+      padding: 19px; border: 1px solid var(--border); border-radius: 17px;
+      background: linear-gradient(145deg, rgba(29,29,38,.96), rgba(21,21,27,.96));
+      color: inherit; text-decoration: none;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .app:hover { transform: translateY(-3px); border-color: #62558e; background: var(--panel-hover); }
+    .app:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .app-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .app-icon {
+      width: 46px; height: 46px; object-fit: contain; border-radius: 12px;
+      background: #252530; border: 1px solid rgba(255,255,255,.06);
+    }
+    .fallback-icon { display: none; width: 46px; height: 46px; place-items: center; border-radius: 12px; background: #29243c; color: var(--accent); font-size: 18px; font-weight: 800; }
+    .arrow { color: #777786; font-size: 18px; transition: color .18s, transform .18s; }
+    .app:hover .arrow { color: var(--accent); transform: translate(2px,-2px); }
+    .app h2 { margin: 21px 0 6px; font-size: 16px; letter-spacing: -.015em; }
+    .app p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .empty { display: none; padding: 34px 10px; color: var(--muted); text-align: center; border: 1px dashed var(--border); border-radius: 14px; }
+    footer { margin-top: 27px; color: #777786; font-size: 12px; text-align: center; }
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 28px, 500px); padding-top: 34px; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .app { min-height: 174px; padding: 15px; }
+      .app-icon, .fallback-icon { width: 42px; height: 42px; }
+      .app h2 { margin-top: 17px; font-size: 15px; }
+      .toolbar { gap: 9px; }
+    }
+    @media (max-width: 360px) {
+      .grid { grid-template-columns: 1fr; }
+      .app { min-height: 145px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="eyebrow"><span class="mark"></span> ArtCraft Workspace</div>
+      <h1>Make room for ideas.</h1>
+      <p class="subtitle">Your creative toolkit, all in one place.</p>
+    </header>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="search" type="search" placeholder="Find an app…" autocomplete="off" aria-label="Search apps">
+      </div>
+      <span class="count" id="count">13 apps</span>
+    </div>
+
+    <section class="grid" id="apps" aria-label="ArtCraft apps">
+      <a class="app" href="./photocraft/" data-name="photocraft photo image photography">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/photocraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">P</span><span class="arrow">↗</span></div>
+        <h2>PhotoCraft</h2><p>Photo editing and image creation.</p>
+      </a>
+      <a class="app" href="./vectorcraft/" data-name="vectorcraft vector illustration graphics">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/vectorcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">V</span><span class="arrow">↗</span></div>
+        <h2>VectorCraft</h2><p>Vector graphics and illustration.</p>
+      </a>
+      <a class="app" href="./filmcraft/" data-name="filmcraft film video movie">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/filmcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">F</span><span class="arrow">↗</span></div>
+        <h2>FilmCraft</h2><p>Tools for video and film workflows.</p>
+      </a>
+      <a class="app" href="./lightcraft/" data-name="lightcraft lighting light">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/lightcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">L</span><span class="arrow">↗</span></div>
+        <h2>LightCraft</h2><p>Lighting and visual adjustments.</p>
+      </a>
+      <a class="app" href="./pdfcraft/" data-name="pdfcraft pdf documents">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/pdfcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">P</span><span class="arrow">↗</span></div>
+        <h2>PdfCraft</h2><p>Work with PDF documents.</p>
+      </a>
+      <a class="app" href="./effectcraft/" data-name="effectcraft effects visual">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/effectcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">E</span><span class="arrow">↗</span></div>
+        <h2>EffectCraft</h2><p>Create and refine visual effects.</p>
+      </a>
+      <a class="app" href="./designcraft/" data-name="designcraft design graphic">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/designcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">D</span><span class="arrow">↗</span></div>
+        <h2>DesignCraft</h2><p>A workspace for design projects.</p>
+      </a>
+      <a class="app" href="./figcraft/" data-name="figcraft figma interface ui ux">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/figcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">F</span><span class="arrow">↗</span></div>
+        <h2>FigCraft</h2><p>Interface design and prototyping.</p>
+      </a>
+      <a class="app" href="./wordcraft/" data-name="wordcraft word writing documents">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/wordcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">W</span><span class="arrow">↗</span></div>
+        <h2>WordCraft</h2><p>Create and edit documents.</p>
+      </a>
+      <a class="app" href="./soundcraft/" data-name="soundcraft sound audio music">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/soundcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">S</span><span class="arrow">↗</span></div>
+        <h2>SoundCraft</h2><p>Audio and sound creation tools.</p>
+      </a>
+      <a class="app" href="./deckcraft/" data-name="deckcraft presentations slides">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/deckcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">D</span><span class="arrow">↗</span></div>
+        <h2>DeckCraft</h2><p>Build and edit presentations.</p>
+      </a>
+      <a class="app" href="./cadcraft/" data-name="cadcraft cad 3d engineering">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/cadcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">C</span><span class="arrow">↗</span></div>
+        <h2>CADCraft</h2><p>Computer-aided design tools.</p>
+      </a>
+      <a class="app" href="./gridcraft/" data-name="gridcraft grid spreadsheet tables">
+        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/gridcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">G</span><span class="arrow">↗</span></div>
+        <h2>GridCraft</h2><p>Work with grids, tables, and data.</p>
+      </a>
+    </section>
+
+    <div class="empty" id="empty">No apps match that search. Try another name.</div>
+    <footer>ArtCraft Workspace · Your tools, one launchpad.</footer>
+  </main>
+
+  <script>
+    const search = document.getElementById('search');
+    const cards = [...document.querySelectorAll('.app')];
+    const count = document.getElementById('count');
+    const empty = document.getElementById('empty');
+
+    search.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      cards.forEach(card => {
+        const matches = (card.dataset.name + ' ' + card.querySelector('h2').textContent).toLowerCase().includes(query);
+        card.hidden = !matches;
+        if (matches) visible++;
+      });
+      count.textContent = `${visible} app${visible === 1 ? '' : 's'}`;
+      empty.style.display = visible ? 'none' : 'block';
+    });
+  </script>
+</body>
+</html>
