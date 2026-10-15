@@ -1,181 +1,410 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101014">
-  <title>ArtCraft — App Launcher</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #101014;
-      --panel: #18181f;
-      --panel-hover: #20202a;
-      --border: #30303b;
-      --text: #f5f5f7;
-      --muted: #a2a2b1;
-      --accent: #b8a1ff;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(ellipse at 15% 0%, rgba(121, 87, 255, .13), transparent 35rem),
-        var(--bg);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 54px 0 48px; }
-    header { margin-bottom: 30px; }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 9px;
-      color: var(--accent); font-size: 12px; font-weight: 750;
-      letter-spacing: .16em; text-transform: uppercase;
-    }
-    .mark { width: 9px; height: 9px; border-radius: 3px; background: var(--accent); transform: rotate(45deg); }
-    h1 { margin: 17px 0 8px; font-size: clamp(34px, 6vw, 54px); line-height: 1.04; letter-spacing: -.045em; }
-    .subtitle { color: var(--muted); margin: 0; font-size: 15px; line-height: 1.6; }
-    .toolbar { display: flex; align-items: center; gap: 14px; margin: 28px 0 20px; }
-    .search-wrap { position: relative; flex: 1; }
-    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #858594; pointer-events: none; }
-    #search {
-      width: 100%; height: 48px; padding: 0 16px 0 43px;
-      border: 1px solid var(--border); border-radius: 13px;
-      background: rgba(24,24,31,.88); color: var(--text); font: inherit; outline: none;
-    }
-    #search:focus { border-color: #8270c8; box-shadow: 0 0 0 3px rgba(184,161,255,.1); }
-    .count { color: var(--muted); font-size: 13px; white-space: nowrap; }
-    .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-    .app {
-      min-width: 0; display: flex; flex-direction: column; min-height: 190px;
-      padding: 19px; border: 1px solid var(--border); border-radius: 17px;
-      background: linear-gradient(145deg, rgba(29,29,38,.96), rgba(21,21,27,.96));
-      color: inherit; text-decoration: none;
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-    }
-    .app:hover { transform: translateY(-3px); border-color: #62558e; background: var(--panel-hover); }
-    .app:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-    .app-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .app-icon {
-      width: 46px; height: 46px; object-fit: contain; border-radius: 12px;
-      background: #252530; border: 1px solid rgba(255,255,255,.06);
-    }
-    .fallback-icon { display: none; width: 46px; height: 46px; place-items: center; border-radius: 12px; background: #29243c; color: var(--accent); font-size: 18px; font-weight: 800; }
-    .arrow { color: #777786; font-size: 18px; transition: color .18s, transform .18s; }
-    .app:hover .arrow { color: var(--accent); transform: translate(2px,-2px); }
-    .app h2 { margin: 21px 0 6px; font-size: 16px; letter-spacing: -.015em; }
-    .app p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
-    .empty { display: none; padding: 34px 10px; color: var(--muted); text-align: center; border: 1px dashed var(--border); border-radius: 14px; }
-    footer { margin-top: 27px; color: #777786; font-size: 12px; text-align: center; }
-    @media (max-width: 900px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (max-width: 620px) {
-      .shell { width: min(100% - 28px, 500px); padding-top: 34px; }
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-      .app { min-height: 174px; padding: 15px; }
-      .app-icon, .fallback-icon { width: 42px; height: 42px; }
-      .app h2 { margin-top: 17px; font-size: 15px; }
-      .toolbar { gap: 9px; }
-    }
-    @media (max-width: 360px) {
-      .grid { grid-template-columns: 1fr; }
-      .app { min-height: 145px; }
-    }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f8fafc">
+<title>Do the Work. Skip the Subscription.</title>
+<style>
+:root{color-scheme:light dark;--bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--text:#172b4d;--muted:#64748b;--blue:#2457d6;--blue-soft:#eff6ff;--green:#13734a;--green-soft:#eaf7f0}
+@media(prefers-color-scheme:dark){:root{--bg:#0f141c;--surface:#171e29;--border:#2b3545;--text:#e7edf7;--muted:#a0aec0;--blue:#8aaaff;--blue-soft:#1c2b46;--green:#76d6a7;--green-soft:#18382c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.shell{width:min(1120px,calc(100% - 36px));margin:0 auto;padding:30px 0 44px}
+.hero{margin:0 0 18px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;font-weight:750;letter-spacing:.09em;text-transform:uppercase;margin-bottom:14px}
+.eyebrow-mark{width:8px;height:8px;background:var(--blue);border-radius:2px;transform:rotate(45deg)}
+.hero h1{max-width:760px;margin:0;font-size:clamp(32px,5vw,52px);line-height:1.04;letter-spacing:-.055em;font-weight:780}
+.hero h1 .accent{color:var(--blue)}
+.hero-copy{max-width:660px;margin:10px 0 15px;color:var(--muted);font-size:16px;line-height:1.6}
+.promise-row{display:flex;flex-wrap:wrap;gap:9px}
+.promise{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:12px;font-weight:650}
+.promise-icon{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:5px;background:var(--green-soft);color:var(--green);font-size:12px;font-weight:800}
+.toolbar{display:flex;align-items:center;gap:12px;margin:20px 0 10px}
+.search-wrap{position:relative;flex:1;min-width:0}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#64748b;pointer-events:none;font-size:20px}
+#search{width:100%;height:52px;padding:0 42px 0 44px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);outline:none;font:inherit;font-size:14px;box-shadow:0 1px 2px #0f172a08;transition:border-color .15s,box-shadow .15s}
+#search::placeholder{color:#94a3b8}
+#search:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2457d61a}
+#clear-search{display:none;position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-size:20px}
+#clear-search:hover{background:var(--border)}
+.count{color:var(--muted);font-size:12px;white-space:nowrap}
+.try-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:0 0 14px;color:var(--muted);font-size:12px}
+.try-label{margin-right:2px}
+.quick-term{border:1px solid var(--border);border-radius:6px;padding:6px 9px;background:var(--surface);color:var(--muted);font:inherit;cursor:pointer}
+.quick-term:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
+.category-bar{display:flex;gap:7px;overflow-x:auto;padding:0 0 16px;margin:0 0 4px;scrollbar-width:thin}
+.category{flex:0 0 auto;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--muted);padding:8px 11px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.category:hover{background:var(--border);color:var(--text)}
+.category[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.app{min-width:0;min-height:181px;display:flex;flex-direction:column;padding:17px;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:inherit;text-decoration:none;box-shadow:0 1px 2px #0f172a08;transition:border-color .15s,box-shadow .15s,transform .15s}
+.app:hover{border-color:#b6c8f7;box-shadow:0 5px 16px #0f172a0d;transform:translateY(-1px)}
+.app:focus-visible,.category:focus-visible,.quick-term:focus-visible,#clear-search:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.app[hidden]{display:none!important}
+.app-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.app-brand{display:flex;align-items:center;gap:11px;min-width:0}
+.app-icon,.fallback-icon{width:42px;height:42px;object-fit:contain;border-radius:10px;flex:0 0 auto}
+.app-icon{background:var(--bg)}
+.fallback-icon{display:none;place-items:center;background:var(--blue-soft);color:var(--blue);font-size:16px;font-weight:750}
+.app-kind{color:var(--muted);font-size:10px;line-height:1.3;font-weight:700;letter-spacing:.055em;text-transform:uppercase}
+.arrow{color:#94a3b8;font-size:18px}
+.app:hover .arrow{color:var(--blue)}
+.app h3{margin:16px 0 5px;font-size:16px;line-height:1.25;font-weight:720;letter-spacing:-.025em}
+.app p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+.replaces{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:auto;padding-top:14px}
+.replaces-label{color:#94a3b8;font-size:10px}
+.replaces-tag{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:5px;background:var(--bg);padding:4px 6px;color:var(--muted);font-size:10px;font-weight:600;line-height:1.1}
+.open-label{margin-left:auto;color:var(--blue);font-size:11px;font-weight:700;white-space:nowrap}
+.empty{display:none;padding:34px 14px;color:var(--muted);text-align:center;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:13px}
+.empty strong{display:block;color:var(--text);margin-bottom:5px;font-weight:650}
+.legal-note{margin-top:22px;padding-top:14px;border-top:1px solid var(--border);color:#64748b;font-size:11px;line-height:1.6}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.shell{padding-top:30px}}
+@media(max-width:560px){.shell{width:calc(100% - 28px);padding:23px 0 34px}.hero h1{font-size:34px}.hero-copy{font-size:14px}.toolbar{margin-top:22px;gap:8px}.grid{grid-template-columns:1fr;gap:9px}.app{min-height:156px;padding:15px}.app h3{margin-top:13px}.try-row{gap:6px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
+
+.switch-guide{position:relative;display:flex;align-items:center;min-height:91px;margin:19px 0 2px;padding:15px 18px;border:1px solid var(--border);border-radius:10px;background:linear-gradient(110deg,var(--surface) 0%,var(--blue-soft) 100%);overflow:hidden}
+.switch-guide-kicker{margin-bottom:7px;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.1em}
+.switch-guide-stage{position:relative;min-height:40px;width:100%}
+.switch-guide-item{position:absolute;inset:0;opacity:0;transform:translateY(6px);pointer-events:none;transition:opacity .32s ease,transform .32s ease}
+.switch-guide-item.is-active{opacity:1;transform:translateY(0);pointer-events:auto}
+.switch-guide-question{font-size:14px;line-height:1.45;color:var(--text)}
+.switch-guide-question strong{font-weight:750}
+.switch-guide-answer{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.45}
+.switch-guide-answer a{color:var(--blue);font-weight:750;text-decoration:none}
+.switch-guide-answer a:hover{text-decoration:underline}
+.switch-guide-dots{display:flex;gap:5px;position:absolute;right:16px;top:16px}
+.switch-guide-dots span{width:5px;height:5px;border-radius:99px;background:var(--border);transition:background .2s,width .2s}
+.switch-guide-dots span.is-active{width:14px;background:var(--blue)}
+@media(max-width:560px){.switch-guide{min-height:96px;margin-top:14px;padding:14px}.switch-guide-question{font-size:13px}.switch-guide-dots{right:13px;top:13px}.switch-guide-kicker{padding-right:55px}}
+@media(prefers-reduced-motion:reduce){.switch-guide-item,.switch-guide-dots span{transition:none!important}}
+
+
+.full-replacements-link{display:inline-flex;align-items:center;gap:5px;margin:0 0 18px;color:var(--blue);font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.full-replacements-link span{font-size:14px}
+.full-replacements-link:hover{color:#1742a5}
+.original-letter{display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border:1px solid var(--border);border-radius:10px;background:var(--blue-soft);color:var(--blue);font-size:21px;line-height:1;font-weight:800;letter-spacing:-.04em}
+
+
+
+
+.favorites-section{margin:0 0 20px;padding:20px 22px 22px;border:1px solid var(--border);border-radius:13px;background:var(--surface);box-shadow:0 2px 8px #0f172a06}
+.favorites-heading{margin-bottom:14px;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.09em}
+.favorites-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.favorite-item{min-width:0}
+.favorite-tool{display:flex;align-items:center;gap:16px;width:100%;min-height:112px;padding:17px 18px;border:1px solid var(--border);border-radius:11px;background:var(--blue-soft);color:var(--text);text-decoration:none;transition:border-color .15s,background .15s,transform .15s}
+.favorite-tool:hover{border-color:var(--blue);background:var(--blue-soft);transform:translateY(-1px)}
+.favorite-icon{display:block;object-fit:contain;flex:0 0 58px;width:58px;height:58px;border-radius:12px;background:var(--surface)}
+.favorite-copy{display:flex;flex-direction:column;gap:6px;min-width:0}
+.favorite-name{font-size:17px;line-height:1.2;font-weight:760;letter-spacing:-.025em}
+.favorite-subtitle{color:var(--muted);font-size:12px;line-height:1.4;font-weight:450}
+.favorite-tool:focus-visible,.find-more-tools:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.favorites-footer{display:flex;justify-content:flex-end;margin-top:14px}
+.find-more-tools{display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border:1px solid var(--blue);border-radius:8px;background:var(--blue);color:#fff;text-decoration:none;font-size:12px;font-weight:750}
+.find-more-tools:hover{background:#1948b7;border-color:#1948b7}
+.find-more-tools span{font-size:14px}
+@media(max-width:560px){
+ .favorites-section{padding:15px;margin-bottom:16px}
+ .favorites-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .favorite-tool{align-items:flex-start;flex-direction:column;gap:10px;min-height:144px;padding:12px}
+ .favorite-icon{flex-basis:46px;width:46px;height:46px;border-radius:10px}
+ .favorite-copy{gap:5px}
+ .favorite-name{font-size:14px}
+ .favorite-subtitle{font-size:11px}
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0b1018;
+    --surface: #141c28;
+    --border: #2b3749;
+    --text: #e8eef8;
+    --muted: #a4b1c5;
+    --blue: #9bb8ff;
+    --blue-soft: #1b2a43;
+    --green: #7ce0ad;
+    --green-soft: #17372b;
+  }
+  body { background: var(--bg); color: var(--text); }
+  .eyebrow, .hero-copy, .promise, .quick-term, .category,
+  .app-kind, .app p, .replaces-tag, .switch-guide-kicker,
+  .switch-guide-answer, .favorites-heading, .favorite-subtitle,
+  .legal-note, .section-note { color: var(--muted); }
+  .promise, #search, .quick-term, .category, .app, .empty,
+  .switch-guide, .favorites-section, .favorite-tool {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+  }
+  #search { color: var(--text); }
+  #search::placeholder { color: #8290a5; }
+  #clear-search { color: var(--muted); }
+  #clear-search:hover, .category:hover, .quick-term:hover {
+    background: #222e40;
+    border-color: #52627b;
+    color: var(--text);
+  }
+  .category[aria-pressed="true"] {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #101827;
+  }
+  .quick-term { border-color: var(--border); }
+  .app:hover { background: #182333; border-color: #6e8fd7; }
+  .app-icon, .favorite-icon { background: #f8fafc; }
+  .fallback-icon, .original-letter {
+    background: #1b2a43;
+    border-color: #344b70;
+    color: var(--blue);
+  }
+  .replaces-tag { background: #101722; border-color: #303d50; }
+  .open-label, .full-replacements-link, .switch-guide-answer a {
+    color: var(--blue);
+  }
+  .full-replacements-link:hover { color: #c5d5ff; }
+  .switch-guide {
+    background: linear-gradient(110deg, #141c28 0%, #17243a 100%);
+  }
+  .switch-guide-question { color: var(--text); }
+  .switch-guide-dots span { background: #435066; }
+  .switch-guide-dots span.is-active { background: var(--blue); }
+  .favorite-tool {
+    background: #182333;
+    color: var(--text);
+  }
+  .favorite-tool:hover {
+    background: #1d2b40;
+    border-color: #6e8fd7;
+  }
+  .find-more-tools {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #101827;
+  }
+  .find-more-tools:hover {
+    background: #b3c8ff;
+    border-color: #b3c8ff;
+    color: #101827;
+  }
+  .empty { border-color: var(--border); }
+  .empty strong { color: var(--text); }
+  .legal-note { border-top-color: var(--border); }
+  .legal-note a { color: var(--blue); }
+  .app:focus-visible, .category:focus-visible, .quick-term:focus-visible,
+  #clear-search:focus-visible, .favorite-tool:focus-visible,
+  .find-more-tools:focus-visible {
+    outline-color: var(--blue);
+  }
+}
+
+</style>
 </head>
-<body>
-  <main class="shell">
-    <header>
-      <div class="eyebrow"><span class="mark"></span> ArtCraft Workspace</div>
-      <h1>Make room for ideas.</h1>
-      <p class="subtitle">Your creative toolkit, all in one place.</p>
-    </header>
-
-    <div class="toolbar">
-      <div class="search-wrap">
-        <span class="search-icon" aria-hidden="true">⌕</span>
-        <input id="search" type="search" placeholder="Find an app…" autocomplete="off" aria-label="Search apps">
-      </div>
-      <span class="count" id="count">13 apps</span>
+<body><main class="shell">
+<header class="hero">
+  <div class="eyebrow"><span class="eyebrow-mark"></span> Everyday tools, one click away</div>
+  <h1>Do the Work.<br><span class="accent">Skip the Subscription.</span></h1>
+  <p class="hero-copy">Your familiar tools. Right in the browser.</p>
+  <div class="promise-row">
+    <div class="promise"><span class="promise-icon">✓</span> No install</div>
+    <div class="promise"><span class="promise-icon">✓</span> No app taking up space</div>
+    <div class="promise"><span class="promise-icon">✓</span> No subscription. No strings.</div>
+  </div>
+</header>
+<section class="switch-guide" aria-label="Find a familiar alternative">
+  <div class="switch-guide-kicker">LOOKING FOR SOMETHING FAMILIAR?</div>
+  <div class="switch-guide-stage" aria-live="polite">
+    <div class="switch-guide-item is-active">
+      <div class="switch-guide-question">Looking for <strong>Google Docs or Word?</strong></div>
+      <div class="switch-guide-answer">Try <a href="./wordcraft/">WordCraft</a> for browser-based document editing.</div>
     </div>
+    <div class="switch-guide-item">
+      <div class="switch-guide-question">Looking for <strong>Excel or Sheets?</strong></div>
+      <div class="switch-guide-answer">Try <a href="./gridcraft/">GridCraft</a> for spreadsheets.</div>
+    </div>
+    <div class="switch-guide-item">
+      <div class="switch-guide-question">Looking for <strong>Photoshop?</strong></div>
+      <div class="switch-guide-answer">Explore <a href="./photocraft/">PhotoCraft</a> for image editing.</div>
+    </div>
+  </div>
+  <div class="switch-guide-dots" aria-hidden="true"><span class="is-active"></span><span></span><span></span></div>
+</section>
 
-    <section class="grid" id="apps" aria-label="ArtCraft apps">
-      <a class="app" href="./photocraft/" data-name="photocraft photo image photography">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/photocraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">P</span><span class="arrow">↗</span></div>
-        <h2>PhotoCraft</h2><p>Photo editing and image creation.</p>
-      </a>
-      <a class="app" href="./vectorcraft/" data-name="vectorcraft vector illustration graphics">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/vectorcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">V</span><span class="arrow">↗</span></div>
-        <h2>VectorCraft</h2><p>Vector graphics and illustration.</p>
-      </a>
-      <a class="app" href="./filmcraft/" data-name="filmcraft film video movie">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/filmcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">F</span><span class="arrow">↗</span></div>
-        <h2>FilmCraft</h2><p>Tools for video and film workflows.</p>
-      </a>
-      <a class="app" href="./lightcraft/" data-name="lightcraft lighting light">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/lightcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">L</span><span class="arrow">↗</span></div>
-        <h2>LightCraft</h2><p>Lighting and visual adjustments.</p>
-      </a>
-      <a class="app" href="./pdfcraft/" data-name="pdfcraft pdf documents">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/pdfcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">P</span><span class="arrow">↗</span></div>
-        <h2>PdfCraft</h2><p>Work with PDF documents.</p>
-      </a>
-      <a class="app" href="./effectcraft/" data-name="effectcraft effects visual">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/effectcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">E</span><span class="arrow">↗</span></div>
-        <h2>EffectCraft</h2><p>Create and refine visual effects.</p>
-      </a>
-      <a class="app" href="./designcraft/" data-name="designcraft design graphic">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/designcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">D</span><span class="arrow">↗</span></div>
-        <h2>DesignCraft</h2><p>A workspace for design projects.</p>
-      </a>
-      <a class="app" href="./figcraft/" data-name="figcraft figma interface ui ux">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/figcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">F</span><span class="arrow">↗</span></div>
-        <h2>FigCraft</h2><p>Interface design and prototyping.</p>
-      </a>
-      <a class="app" href="./wordcraft/" data-name="wordcraft word writing documents">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/wordcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">W</span><span class="arrow">↗</span></div>
-        <h2>WordCraft</h2><p>Create and edit documents.</p>
-      </a>
-      <a class="app" href="./soundcraft/" data-name="soundcraft sound audio music">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/soundcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">S</span><span class="arrow">↗</span></div>
-        <h2>SoundCraft</h2><p>Audio and sound creation tools.</p>
-      </a>
-      <a class="app" href="./deckcraft/" data-name="deckcraft presentations slides">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/deckcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">D</span><span class="arrow">↗</span></div>
-        <h2>DeckCraft</h2><p>Build and edit presentations.</p>
-      </a>
-      <a class="app" href="./cadcraft/" data-name="cadcraft cad 3d engineering">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/cadcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">C</span><span class="arrow">↗</span></div>
-        <h2>CADCraft</h2><p>Computer-aided design tools.</p>
-      </a>
-      <a class="app" href="./gridcraft/" data-name="gridcraft grid spreadsheet tables">
-        <div class="app-top"><img class="app-icon" src="https://getartcraft.com/images/apps/gridcraft/icon.webp" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="fallback-icon">G</span><span class="arrow">↗</span></div>
-        <h2>GridCraft</h2><p>Work with grids, tables, and data.</p>
-      </a>
-    </section>
+<a class="full-replacements-link" href="./replacements.html">See the full list of replacements <span aria-hidden="true">↗</span></a>
+<section id="favorites-section" class="favorites-section" hidden aria-label="Your favourite tools">
+  <div class="favorites-heading">YOUR FAVOURITE TOOLS</div>
+  <div id="favorites-list" class="favorites-list"></div>
+  <div class="favorites-footer"><a href="./replacements.html" class="find-more-tools">Find more tools <span aria-hidden="true">↗</span></a></div>
+</section>
+<div class="toolbar"><div class="search-wrap"><span class="search-icon" aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search Photoshop, Google Docs, Excel…" autocomplete="off" aria-label="Search tools and alternatives"><button id="clear-search" type="button" aria-label="Clear search" title="Clear search">×</button></div><span class="count" id="count" aria-live="polite">13 tools</span></div>
+<div class="try-row"><span class="try-label">Try:</span><button class="quick-term" type="button" data-query="Photoshop">Photoshop</button><button class="quick-term" type="button" data-query="Premiere Pro">Premiere Pro</button><button class="quick-term" type="button" data-query="Google Docs">Google Docs</button><button class="quick-term" type="button" data-query="Excel">Excel</button></div>
+<nav class="category-bar" id="categories" aria-label="Filter apps by category">
+<button class="category" data-category="all" aria-pressed="true">All tools</button><button class="category" data-category="photo" aria-pressed="false">Photo editing</button><button class="category" data-category="vector" aria-pressed="false">Illustration</button><button class="category" data-category="video" aria-pressed="false">Video editing</button><button class="category" data-category="design" aria-pressed="false">Design & UI</button><button class="category" data-category="documents" aria-pressed="false">Office & PDFs</button><button class="category" data-category="audio" aria-pressed="false">Audio</button><button class="category" data-category="3d" aria-pressed="false">3D & engineering</button>
+</nav>
+<p class="section-note" style="margin:0 0 13px">Don’t take our word for it. Open a tool and test it on one real task before you switch.</p>
+<section class="grid" id="apps" aria-label="Available tools">
+<a class="app" href="./photocraft/" data-category="photo" data-name="photocraft photo image photography picture retouching image editing image creation raster graphics photoshop adobe photoshop lightroom adobe lightroom gimp affinity photo pixelmator"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter P, for Photoshop">P</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>PhotoCraft</h3><p>Edit photos and create images.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">Photoshop</span><span class="replaces-tag">GIMP</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./vectorcraft/" data-category="vector" data-name="vectorcraft vector vectors illustration illustrator adobe illustrator graphic design logos svg icons drawing affinity designer inkscape coreldraw"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter I, for Illustrator">I</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>VectorCraft</h3><p>Make logos, icons, and scalable artwork.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">Illustrator</span><span class="replaces-tag">CorelDRAW</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./filmcraft/" data-category="video" data-name="filmcraft film video videos video editing editor filmmaking movies clips premiere pro adobe premiere davinci resolve final cut capcut"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter P, for Premiere Pro">P</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>FilmCraft</h3><p>Edit clips and build video projects.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">Premiere Pro</span><span class="replaces-tag">Final Cut</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./lightcraft/" data-category="photo" data-name="lightcraft lighting light color grading exposure tone adjustments photo photography lightroom adobe lightroom image enhancement"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter L, for Lightroom">L</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>LightCraft</h3><p>Tune color, exposure, and lighting.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">Lightroom</span><span class="replaces-tag">Camera Raw</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./pdfcraft/" data-category="documents" data-name="pdfcraft pdf portable document format documents annotate merge split convert sign acrobat adobe acrobat microsoft office office files paperwork"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter A, for Adobe Acrobat">A</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>PdfCraft</h3><p>Edit, organize, and work with PDFs.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">Adobe Acrobat</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./effectcraft/" data-category="video" data-name="effectcraft effects visual effects motion graphics animation after effects adobe after effects vfx compositing transitions video motion"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter A, for After Effects">A</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>EffectCraft</h3><p>Build motion graphics and visual effects.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">After Effects</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./designcraft/" data-category="design" data-name="designcraft design graphic design layouts publishing page layout indesign adobe indesign creative cloud brand identity posters marketing graphics"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter C, for Canva">C</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>DesignCraft</h3><p>Create layouts, graphics, and marketing assets.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">InDesign</span><span class="replaces-tag">Canva</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./figcraft/" data-category="design" data-name="figcraft figma interface ui ux user interface user experience wireframes prototypes prototyping product design adobe xd design systems screens web app"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter F, for Figma">F</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>FigCraft</h3><p>Design interfaces, wireframes, and prototypes.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">Figma</span><span class="replaces-tag">Adobe XD</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./wordcraft/" data-category="documents" data-name="wordcraft word writing text documents word processor microsoft word ms word office 365 microsoft office libreoffice google docs reports essays letters"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter W, for Word">W</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>WordCraft</h3><p>Write and format everyday documents.</p><div class="replaces"><span class="replaces-label">For</span><span class="replaces-tag">Google Docs</span><span class="replaces-tag">Microsoft Word</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./soundcraft/" data-category="audio" data-name="soundcraft sound audio music recording editing mixing sound design podcast voice adobe audition audacity garageband"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter A, for Audition">A</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>SoundCraft</h3><p>Record, edit, and shape audio.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">Audition</span><span class="replaces-tag">Audacity</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./deckcraft/" data-category="documents" data-name="deckcraft presentations slides slideshow powerpoint microsoft powerpoint ppt keynote google slides pitch decks"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter P, for PowerPoint">P</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>DeckCraft</h3><p>Build presentations and slide decks.</p><div class="replaces"><span class="replaces-label">For</span><span class="replaces-tag">Google Slides</span><span class="replaces-tag">PowerPoint</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./cadcraft/" data-category="3d" data-name="cadcraft cad 3d computer aided design engineering technical drawing architecture autocad autodesk drafting modeling"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter A, for AutoCAD">A</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>CADCraft</h3><p>Create technical drawings and CAD designs.</p><div class="replaces"><span class="replaces-label">Try instead of</span><span class="replaces-tag">AutoCAD</span><span class="open-label">Open tool ↗</span></div></a>
+<a class="app" href="./gridcraft/" data-category="documents" data-name="gridcraft grid spreadsheet spreadsheets tables data calculations excel microsoft excel office 365 microsoft office numbers libreoffice calc budgets analytics"><div class="app-top"><div class="app-brand"><span class="original-letter" role="img" aria-label="Letter X, for Excel">X</span><span class="app-kind">A familiar workflow</span></div><span class="arrow">↗</span></div><h3>GridCraft</h3><p>Manage spreadsheets, tables, and calculations.</p><div class="replaces"><span class="replaces-label">For</span><span class="replaces-tag">Google Sheets</span><span class="replaces-tag">Microsoft Excel</span><span class="open-label">Open tool ↗</span></div></a>
+</section>
+<div class="empty" id="empty"><strong>No matching apps found</strong>Try a task like “video editing,” a category like “vector,” or software like “Photoshop” or “Microsoft Word.”</div>
 
-    <div class="empty" id="empty">No apps match that search. Try another name.</div>
-    <footer>ArtCraft Workspace · Your tools, one launchpad.</footer>
-  </main>
+<footer class="legal-note">
+  <p><strong>Independent project.</strong> This directory is not affiliated with or endorsed by Adobe, Microsoft, Autodesk, Figma, or any other referenced brand. Product names are used only to help identify relevant tools and workflows; all trademarks belong to their respective owners.</p>
+  <p>These tools may differ from the products named. Check features, file compatibility, and each project's license before relying on one for important work. <a href="https://github.com/storytold" target="_blank" rel="noopener noreferrer">Explore source code and licenses ↗</a></p>
+</footer>
+</main>
+<script>
+const search=document.getElementById('search'),cards=[...document.querySelectorAll('.app')],count=document.getElementById('count'),empty=document.getElementById('empty'),clearSearch=document.getElementById('clear-search'),categoryButtons=[...document.querySelectorAll('.category')];
+let activeCategory='all';
+const aliases={
+'adobe':'photoshop illustrator premiere after effects lightroom acrobat indesign xd audition photo vector video effects pdf layout interface audio',
+'adobe creative cloud':'photoshop illustrator premiere after effects lightroom acrobat indesign xd audition',
+'photoshop':'photo image editing retouching image creation','lightroom':'photo lighting color grading exposure photography',
+'illustrator':'vector illustration graphics logos svg drawing','premiere':'video editing film movies clips','premiere pro':'video editing film movies clips',
+'after effects':'visual effects motion graphics animation video','acrobat':'pdf documents convert annotate','indesign':'graphic design layouts publishing',
+'adobe xd':'ui ux interface design prototypes','audition':'audio sound editing recording',
+'microsoft':'word excel powerpoint spreadsheets presentations documents office','microsoft office':'word excel powerpoint spreadsheets presentations documents office',
+'office':'word excel powerpoint spreadsheets presentations documents','office 365':'word excel powerpoint spreadsheets presentations documents',
+'word':'writing text documents word processor','excel':'spreadsheet tables data calculations','powerpoint':'presentations slides slideshow',
+'video editing':'filmcraft effectcraft film video editor effects motion','video editor':'filmcraft effectcraft film video editing movies clips',
+'editing video':'filmcraft effectcraft film video editing movies clips','motion graphics':'effectcraft filmcraft visual effects animation',
+'vector':'vectorcraft illustration svg logos drawing graphics','vector graphics':'vectorcraft illustration svg logos drawing graphics',
+'illustration':'vectorcraft designcraft drawing graphics','photo editing':'photocraft lightcraft image retouching photography',
+'image editing':'photocraft lightcraft image retouching photography','graphic design':'designcraft vectorcraft figcraft layouts graphics',
+'ui ux':'figcraft designcraft interface prototypes wireframes','documents':'wordcraft pdfcraft deckcraft gridcraft writing office','google docs':'wordcraft documents writing text word processor','google workspace':'wordcraft gridcraft deckcraft documents spreadsheets presentations','google sheets':'gridcraft spreadsheet tables data calculations','google slides':'deckcraft presentations slides slideshow',
+'office suite':'wordcraft deckcraft gridcraft pdfcraft documents spreadsheets presentations',
+'spreadsheet':'gridcraft excel tables data calculations','spreadsheets':'gridcraft excel tables data calculations',
+'presentation':'deckcraft powerpoint slides slideshow','presentations':'deckcraft powerpoint slides slideshow',
+'pdf':'pdfcraft acrobat documents','3d':'cadcraft engineering modeling architecture'
+};
+const normalize=s=>s.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}\s.+#-]/gu,' ').replace(/\s+/g,' ').trim();
+function expandedQuery(raw){const q=normalize(raw);if(!q)return '';const additions=[];for(const [alias,terms] of Object.entries(aliases)){if(q===alias||(alias.length>3&&q.includes(alias)))additions.push(terms)}return (q+' '+additions.join(' ')).trim()}
+function filterApps(){
+ const raw=search.value,q=normalize(raw),expanded=expandedQuery(raw);let visible=0;
+ const terms=expanded.split(' ').filter(t=>t.length>2);
+ cards.forEach(card=>{
+  const text=normalize([card.dataset.name,card.querySelector('h3').textContent,card.querySelector('p').textContent,card.dataset.category].join(' '));
+  const direct=!q||text.includes(q);
+  const related=!q||terms.some(term=>text.includes(term));
+  const match=(activeCategory==='all'||card.dataset.category===activeCategory)&&(direct||related);
+  card.hidden=!match;if(match)visible++;
+ });
+ count.textContent=`${visible} tool${visible===1?'':'s'}`;empty.style.display=visible?'none':'block';clearSearch.style.display=raw?'block':'none';
+ 
+}
+search.addEventListener('input',filterApps);
+document.querySelectorAll('.quick-term').forEach(button=>button.addEventListener('click',()=>{search.value=button.dataset.query;activeCategory='all';categoryButtons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category==='all')));filterApps();search.focus()}));
+clearSearch.addEventListener('click',()=>{search.value='';filterApps();search.focus()});
+categoryButtons.forEach(button=>button.addEventListener('click',()=>{activeCategory=button.dataset.category;categoryButtons.forEach(b=>b.setAttribute('aria-pressed',String(b===button)));filterApps()}));
+filterApps();
+</script>
 
-  <script>
-    const search = document.getElementById('search');
-    const cards = [...document.querySelectorAll('.app')];
-    const count = document.getElementById('count');
-    const empty = document.getElementById('empty');
+<script>
+(() => {
+  const items = [...document.querySelectorAll('.switch-guide-item')];
+  const dots = [...document.querySelectorAll('.switch-guide-dots span')];
+  if (items.length < 2) return;
+  let current = 0;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const show = index => {
+    items.forEach((item, i) => item.classList.toggle('is-active', i === index));
+    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+  };
+  let hasFavorites = false;
+  try {
+    const saved = JSON.parse(localStorage.getItem('toolFinderFavorites') || '[]');
+    hasFavorites = Array.isArray(saved) && saved.length > 0;
+  } catch (e) {}
+  if (hasFavorites) {
+    current = Math.floor(Math.random() * items.length);
+    show(current);
+    return;
+  }
+  show(0);
+  if (!reducedMotion) window.setInterval(() => {
+    current = (current + 1) % items.length;
+    show(current);
+  }, 3200);
+})();
+</script>
 
-    search.addEventListener('input', () => {
-      const query = search.value.trim().toLowerCase();
-      let visible = 0;
-      cards.forEach(card => {
-        const matches = (card.dataset.name + ' ' + card.querySelector('h2').textContent).toLowerCase().includes(query);
-        card.hidden = !matches;
-        if (matches) visible++;
-      });
-      count.textContent = `${visible} app${visible === 1 ? '' : 's'}`;
-      empty.style.display = visible ? 'none' : 'block';
+
+<script>
+(() => {
+  const section = document.getElementById('favorites-section');
+  const list = document.getElementById('favorites-list');
+  const storageKey = 'toolFinderFavorites';
+  const familiarTools = {
+    WordCraft: { icon: 'wordcraft', subtitle: 'Looking for Microsoft Word or Google Docs?' },
+    GridCraft: { icon: 'gridcraft', subtitle: 'Looking for Excel or Google Sheets?' },
+    DeckCraft: { icon: 'deckcraft', subtitle: 'Looking for PowerPoint or Google Slides?' },
+    PhotoCraft: { icon: 'photocraft', subtitle: 'Looking for Photoshop?' },
+    FilmCraft: { icon: 'filmcraft', subtitle: 'Looking for Premiere Pro or Final Cut Pro?' },
+    EffectCraft: { icon: 'effectcraft', subtitle: 'Looking for After Effects?' },
+    DesignCraft: { icon: 'designcraft', subtitle: 'Looking for InDesign or Canva?' },
+    LightCraft: { icon: 'lightcraft', subtitle: 'Looking for Lightroom?' },
+    VectorCraft: { icon: 'vectorcraft', subtitle: 'Looking for Illustrator or CorelDRAW?' },
+    SoundCraft: { icon: 'soundcraft', subtitle: 'Looking for Audition or Audacity?' },
+    PdfCraft: { icon: 'pdfcraft', subtitle: 'Looking for Adobe Acrobat?' },
+    FigCraft: { icon: 'figcraft', subtitle: 'Looking for Figma or Adobe XD?' },
+    CADCraft: { icon: 'cadcraft', subtitle: 'Looking for AutoCAD?' }
+  };
+  const knownApps = new Map([...document.querySelectorAll('.app')].map(card => [
+    card.querySelector('h3').textContent.trim(),
+    card.getAttribute('href')
+  ]));
+
+  function renderFavorites() {
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch (e) {}
+    if (!Array.isArray(saved)) saved = [];
+    saved = saved.filter(item => item && knownApps.has(item.name) && familiarTools[item.name]);
+    list.replaceChildren();
+    section.hidden = saved.length === 0;
+
+    saved.forEach(item => {
+      const link = document.createElement('a');
+      link.className = 'favorite-tool';
+      link.href = knownApps.get(item.name);
+
+      const icon = document.createElement('img');
+      icon.className = 'favorite-icon';
+      icon.src = 'https://getartcraft.com/images/apps/' + familiarTools[item.name].icon + '/icon.webp';
+      icon.alt = '';
+      icon.loading = 'lazy';
+      icon.onerror = () => { icon.style.display = 'none'; };
+
+      const copy = document.createElement('span');
+      copy.className = 'favorite-copy';
+      const name = document.createElement('span');
+      name.className = 'favorite-name';
+      name.textContent = item.name;
+      const subtitle = document.createElement('span');
+      subtitle.className = 'favorite-subtitle';
+      subtitle.textContent = familiarTools[item.name].subtitle;
+
+      copy.append(name, subtitle);
+      link.append(icon, copy);
+      const wrap = document.createElement('div');
+      wrap.className = 'favorite-item';
+      wrap.appendChild(link);
+      list.appendChild(wrap);
     });
-  </script>
-</body>
-</html>
+  }
+
+  renderFavorites();
+})();
+</script>
+
+</body></html>

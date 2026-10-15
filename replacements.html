@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Tool finder</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --page: #f4f6fa;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-soft: #f7f9fc;
+  --text: #202b3c;
+  --muted: #68758a;
+  --border: #dfe5ee;
+  --border-strong: #c7d0df;
+  --blue: #2458d3;
+  --blue-hover: #1b49b8;
+  --blue-soft: #edf3ff;
+  --button-text: #ffffff;
+  --shadow: 0 18px 55px rgba(20, 36, 66, .08);
+  --focus: rgba(36, 88, 211, .22);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #0b1018;
+    --surface: #141c28;
+    --surface-raised: #192333;
+    --surface-soft: #101722;
+    --text: #e8eef8;
+    --muted: #a4b1c5;
+    --border: #2b3749;
+    --border-strong: #43536a;
+    --blue: #9bb8ff;
+    --blue-hover: #b4c9ff;
+    --blue-soft: #1b2a43;
+    --button-text: #101827;
+    --shadow: 0 18px 55px rgba(0, 0, 0, .24);
+    --focus: rgba(155, 184, 255, .24);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 50% -180px, var(--blue-soft), transparent 620px),
+    var(--page);
+  color: var(--text);
+  font: 15px/1.5 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+.shell { width: min(790px, 100%); margin: 0 auto; padding: 30px 20px 56px; }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.brand-lockup { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.brand-mark {
+  display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 38px;
+  border-radius: 11px; background: var(--blue); color: var(--button-text); font-weight: 850;
+  box-shadow: 0 5px 16px var(--focus);
+}
+.brand { font-size: 17px; font-weight: 780; letter-spacing: -.035em; }
+.brand-caption { color: var(--muted); font-size: 12px; margin-top: 1px; }
+.stepcount {
+  flex: 0 0 auto; padding: 7px 11px; border: 1px solid var(--border);
+  border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 650;
+}
+.progress { height: 5px; margin-bottom: 18px; border-radius: 999px; overflow: hidden; background: var(--border); }
+.progress span { display: block; height: 100%; width: 25%; border-radius: inherit; background: var(--blue); transition: width .25s ease; }
+.panel {
+  padding: clamp(22px, 5vw, 36px); border: 1px solid var(--border); border-radius: 22px;
+  background: var(--surface); box-shadow: var(--shadow);
+}
+.kicker { margin: 0 0 9px; color: var(--blue); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+h1 { margin: 0; font-size: clamp(27px, 4vw, 35px); line-height: 1.12; letter-spacing: -.05em; }
+.sub { margin: 11px 0 25px; color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+.option {
+  position: relative; display: flex; align-items: center; gap: 12px; min-height: 70px;
+  padding: 14px; border: 1px solid var(--border); border-radius: 13px;
+  background: var(--surface-raised); color: var(--text); cursor: pointer;
+  transition: border-color .15s, background .15s, transform .15s;
+}
+.option:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+.option.selected { border-color: var(--blue); background: var(--blue-soft); }
+.option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.check {
+  display: grid; place-items: center; width: 20px; height: 20px; flex: 0 0 20px;
+  border: 1.5px solid var(--border-strong); border-radius: 6px; color: transparent; font-size: 13px; font-weight: 850;
+}
+.option.selected .check { border-color: var(--blue); background: var(--blue); color: var(--button-text); }
+.optname { font-size: 14px; font-weight: 650; line-height: 1.3; }
+.actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 28px; }
+.action-right { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+.textbtn {
+  min-height: 44px; padding: 10px 3px; border: 0; border-radius: 8px;
+  background: transparent; color: var(--muted); font-weight: 600;
+}
+.textbtn:hover { color: var(--text); }
+.primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 46px; min-width: 132px; padding: 11px 18px; border: 1px solid var(--blue);
+  border-radius: 11px; background: var(--blue); color: var(--button-text); font-weight: 750;
+  text-decoration: none; box-shadow: 0 5px 14px var(--focus);
+  transition: transform .15s, background .15s, box-shadow .15s;
+}
+.primary:hover { background: var(--blue-hover); border-color: var(--blue-hover); transform: translateY(-1px); }
+.primary[hidden] { display: none !important; }
+.primary:active { transform: translateY(0); }
+.primary:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.skip { margin-top: 14px; color: var(--muted); font-size: 12px; }
+.results { display: grid; gap: 10px; }
+.resultrow {
+  display: grid; grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr);
+  align-items: stretch; gap: 10px;
+}
+.toolbox { min-width: 0; padding: 16px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface-raised); }
+.toolbox strong { display: block; font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.toolbox.new { border-color: var(--border-strong); background: var(--blue-soft); }
+.arrow { display: grid; place-items: center; color: var(--blue); font-size: 21px; }
+.openlink { display: inline-flex; margin-top: 10px; color: var(--blue); font-size: 12px; font-weight: 800; text-decoration: none; }
+.openlink:hover { text-decoration: underline; text-underline-offset: 3px; }
+.resultnote { margin: 17px 0 0; color: var(--muted); font-size: 12px; }
+.empty { padding: 22px; border: 1px dashed var(--border-strong); border-radius: 13px; color: var(--muted); text-align: center; }
+@media (max-width: 560px) {
+  .shell { padding: 20px 12px 32px; }
+  .top { margin-bottom: 18px; }
+  .brand-caption { display: none; }
+  .brand { font-size: 16px; }
+  .panel { border-radius: 17px; }
+  .grid { grid-template-columns: 1fr; gap: 8px; }
+  .option { min-height: 61px; }
+  .actions { align-items: flex-start; }
+  .action-right { gap: 8px; }
+  .primary { min-width: 0; padding: 11px 14px; }
+  .resultrow { grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr); gap: 5px; }
+  .toolbox { padding: 11px 9px; }
+  .toolbox strong { font-size: 12px; }
+  .arrow { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <div class="brand-lockup">
+      <div class="brand-mark" aria-hidden="true">T</div>
+      <div><div class="brand">Tool finder</div><div class="brand-caption">Find browser-based alternatives to familiar apps</div></div>
+    </div>
+    <div class="stepcount" id="stepcount">Step 1 of 4</div>
+  </header>
+  <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+  <section class="panel" id="panel" aria-live="polite"></section>
+</main>
+<script>
+const steps = [
+  {title:"Office apps", kicker:"01 / Office", sub:"Which do you use?", options:[
+    ["Google Docs / Microsoft Word","WordCraft","wordcraft"],
+    ["Excel / Google Sheets","GridCraft","gridcraft"],
+    ["PowerPoint / Google Slides","DeckCraft","deckcraft"]
+  ]},
+  {title:"Creative apps", kicker:"02 / Creative", sub:"Which do you use?", options:[
+    ["Photoshop","PhotoCraft","photocraft"],
+    ["Premiere Pro / Final Cut Pro","FilmCraft","filmcraft"],
+    ["After Effects","EffectCraft","effectcraft"],
+    ["InDesign / Canva","DesignCraft","designcraft"],
+    ["Lightroom","LightCraft","lightcraft"],
+    ["Illustrator / CorelDRAW","VectorCraft","vectorcraft"]
+  ]},
+  {title:"Audio & PDF", kicker:"03 / Audio & PDF", sub:"Which do you use?", options:[
+    ["Audition / Audacity","SoundCraft","soundcraft"],
+    ["Adobe Acrobat","PdfCraft","pdfcraft"]
+  ]},
+  {title:"Design & technical", kicker:"04 / Design & technical", sub:"Which do you use?", options:[
+    ["Figma / Adobe XD","FigCraft","figcraft"],
+    ["AutoCAD","CADCraft","cadcraft"]
+  ]}
+];
+const selected = new Set();
+let step = 0;
+const panel = document.getElementById("panel");
+function saveFavorites() {
+  const matches = [];
+  steps.forEach(s => s.options.forEach(o => {
+    if (selected.has(o[0]) && !matches.some(m => m.name === o[1])) {
+      matches.push({name:o[1], href:"./"+o[2]+"/"});
+    }
+  }));
+  try { localStorage.setItem("toolFinderFavorites", JSON.stringify(matches)); } catch (e) {}
+}
+function goHome() {
+  saveFavorites();
+  window.location.href = "./index.html";
+}
+function renderStep() {
+  const s = steps[step];
+  document.getElementById("stepcount").textContent = `Step ${step+1} of ${steps.length}`;
+  document.getElementById("progress").style.width = ((step+1)/steps.length*100) + "%";
+  panel.innerHTML = `<p class="kicker">${s.kicker}</p><h1>${s.title}</h1><p class="sub">${s.sub}</p>
+    <div class="grid">${s.options.map(o => {
+      const on = selected.has(o[0]);
+      return `<label class="option ${on ? "selected" : ""}"><input type="checkbox" value="${esc(o[0])}" ${on ? "checked" : ""}><span class="check" aria-hidden="true">✓</span><span class="optname">${esc(o[0])}</span></label>`;
+    }).join("")}</div>
+    <div class="actions">
+      ${step===0 ? '<span></span>' : '<button class="textbtn" id="back" type="button">← Back</button>'}
+      <div class="action-right">
+        <button class="primary" id="finish" type="button" ${selected.size===0 ? "hidden" : ""}>Finish</button>
+        <button class="primary" id="next" type="button">${step===steps.length-1 ? "Show my matches" : "Continue"} <span aria-hidden="true">→</span></button>
+      </div>
+    </div>
+    <div class="skip">Choose all that apply. You can skip a category.</div>`;
+  panel.querySelectorAll(".option input").forEach(input => input.addEventListener("change", e => {
+    const name = e.target.value;
+    e.target.checked ? selected.add(name) : selected.delete(name);
+    e.target.closest(".option").classList.toggle("selected", e.target.checked);
+    document.getElementById("finish").hidden = selected.size === 0;
+  }));
+  document.getElementById("next").addEventListener("click", () => {
+    if (step < steps.length-1) { step++; renderStep(); }
+    else renderResults();
+  });
+  document.getElementById("finish").addEventListener("click", goHome);
+  const back = document.getElementById("back");
+  if (back) back.addEventListener("click", () => { step--; renderStep(); });
+}
+function renderResults() {
+  saveFavorites();
+  document.getElementById("stepcount").textContent = "Your matches";
+  document.getElementById("progress").style.width = "100%";
+  const matches = [];
+  steps.forEach(s => s.options.forEach(o => {
+    if (selected.has(o[0]) && !matches.some(m => m[1] === o[1])) matches.push(o);
+  }));
+  panel.innerHTML = `<p class="kicker">Your results</p><h1>Your matches.</h1><p class="sub">Your selection → your alternative.</p>
+    ${matches.length ? `<div class="results">${matches.map(o => `<div class="resultrow"><div class="toolbox"><strong>${esc(o[0])}</strong></div><div class="arrow" aria-hidden="true">→</div><div class="toolbox new"><strong>${esc(o[1])}</strong><a class="openlink" href="./${o[2]}/">Open ↗</a></div></div>`).join("")}</div>` : `<div class="empty">You didn’t select any tools. Go back and choose the ones you use.</div>`}
+    <p class="resultnote">Features and file compatibility may differ.</p>
+    <div class="actions"><button class="textbtn" id="back" type="button">← Edit answers</button><button class="textbtn" id="restart" type="button">Start again</button><button class="primary" id="finishHome" type="button">Finish</button></div>`;
+  document.getElementById("back").addEventListener("click", () => { step=steps.length-1; renderStep(); });
+  document.getElementById("restart").addEventListener("click", () => { selected.clear(); step=0; renderStep(); });
+  document.getElementById("finishHome").addEventListener("click", goHome);
+}
+function esc(s) { return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+renderStep();
+</script>
+</body>
+</html>
